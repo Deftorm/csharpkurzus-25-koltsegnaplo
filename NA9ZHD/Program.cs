@@ -1,7 +1,9 @@
-﻿internal class Program
+﻿using NA9ZHD;
+
+internal class Program
 {
     private static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        DataWarden.Instance().CheckDataFolderExistance();
     }
 }
