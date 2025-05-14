@@ -9,6 +9,7 @@ namespace NA9ZHD;
 /// Sztetösztisön
 /// Statisztikus osztály melyben egy hónap, év bevételeit, kiadásait tekinthetjük meg, vagy hasonlíthatjuk össze
 /// </summary>
-internal class Statistician
+public static class Statistician
 {
+
 }
