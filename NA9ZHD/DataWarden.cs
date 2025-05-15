@@ -43,3 +43,19 @@ public class DataWarden
         return months;
     }
 }
+
+public enum Months
+{
+    JANUÁR = 1,
+    FEBRUÁR = 2,
+    MÁRCIUS = 3,
+    ÁPRILIS = 4,
+    MÁJUS = 5,
+    JÚNIUS = 6,
+    JÚLIUS = 7,
+    AUGUSZTUS = 8,
+    SZEPTEMBER = 9,
+    OKTÓBER = 10,
+    NOVEMBER = 11,
+    DECEMBER = 12
+}

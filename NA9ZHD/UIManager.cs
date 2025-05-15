@@ -13,12 +13,20 @@ namespace NA9ZHD;
 /// </summary>
 public static class UIManager
 {
+    /// <summary>
+    /// Behelyettesíti a Console.Write metódus szerepét. Manuálisan kell sortörést a végére biggyeszteni
+    /// </summary>
+    /// <param name="text"></param>
+    public static void Print(string text)
+    {
+        Console.Write(text);
+    }
     public static void Welcome()
     {
         Console.SetWindowSize(123, Console.WindowHeight);
         Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
-        Console.WriteLine("" +
+        CC(ConsoleColor.Black);
+        Print("" +
             "...........................................................................................................................\r\n" +
             "...........................................................................................................................\r\n" +
             ".................██╗  ██╗██████╗██╗ ██████████████████████╗██████╗███╗   ██╗█████╗██████╗██╗     ██████╗ ..................\r\n" +
@@ -28,62 +36,62 @@ public static class UIManager
             ".................██║  ██╚██████╔█████████║  ██████████████╚██████╔██║ ╚██████║  ████║    ███████╚██████╔╝..................\r\n" +
             ".................╚═╝  ╚═╝╚═════╝╚══════╚═╝  ╚══════╚══════╝╚═════╝╚═╝  ╚═══╚═╝  ╚═╚═╝    ╚══════╝╚═════╝ ..................\r\n" +
             "...........................................................................................................................\r\n" +
-            "...........................................................................................................................\r");
+            "...........................................................................................................................\r\n");
 
-        Console.WriteLine("...........................................................................................................................\r");
+        Print("...........................................................................................................................\r\n");
 
         Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write("PROGRAMOZTA:");
+        CC(ConsoleColor.Green);
+        Print("PROGRAMOZTA:");
         Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
-        Console.Write(".........");
+        CC(ConsoleColor.Black);
+        Print(".........");
         Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write("Németh Márton");
+        CC(ConsoleColor.Green);
+        Print("Németh Márton");
         Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
-        Console.WriteLine(".........................................................................................");
+        CC(ConsoleColor.Black);
+        Print(".........................................................................................\n");
 
-        Console.WriteLine("...........................................................................................................................\r");
-
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write("NEPTUN  KÓD:");
-        Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
-        Console.Write(".........");
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write("NA9ZHD");
-        Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
-        Console.WriteLine("................................................................................................");
-
-        Console.WriteLine("...........................................................................................................................\r");
+        Print("...........................................................................................................................\r\n");
 
         Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write("KURZUS NEVE:");
+        CC(ConsoleColor.Green);
+        Print("NEPTUN  KÓD:");
         Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
-        Console.Write(".........");
+        CC(ConsoleColor.Black);
+        Print(".........");
         Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write("Alkalmazásfejlesztés c# alapokon a modern fejlesztési irányelvek bemutatásával");
+        CC(ConsoleColor.Green);
+        Print("NA9ZHD");
         Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
-        Console.WriteLine("........................");
+        CC(ConsoleColor.Black);
+        Print("................................................................................................\n");
 
-        Console.WriteLine("...........................................................................................................................\r");
-        Console.WriteLine("...........................................................................................................................\r");
-        Console.WriteLine("...........................................................................................................................\r");
-        Console.WriteLine("..........................© 2025 - 2025 Költségnapló Konzolapplikáció - You Have No Rights Bozo............................");
+        Print("...........................................................................................................................\r\n");
+
         Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("\n--// Funkciók navigálása gombnyomással lehetséges. Az elérhető gombokat és funkciókat kilistázzuk. //--");
-        Console.ForegroundColor= ConsoleColor.Green;
-        Console.WriteLine("\n\nNyomjon meg egy gombot a továbblépéshez!");
+        CC(ConsoleColor.Green);
+        Print("KURZUS NEVE:");
+        Console.BackgroundColor = ConsoleColor.Green;
+        CC(ConsoleColor.Black);
+        Print(".........");
+        Console.BackgroundColor = ConsoleColor.Black;
+        CC(ConsoleColor.Green);
+        Print("Alkalmazásfejlesztés c# alapokon a modern fejlesztési irányelvek bemutatásával");
+        Console.BackgroundColor = ConsoleColor.Green;
+        CC(ConsoleColor.Black);
+        Print("........................\n");
+
+        Print("...........................................................................................................................\r\n");
+        Print("...........................................................................................................................\r\n");
+        Print("...........................................................................................................................\r\n");
+        Print("..........................© 2025 - 2025 Költségnapló Konzolapplikáció - You Have No Rights Bozo............................\n");
+        Console.BackgroundColor = ConsoleColor.Black;
+        CC(ConsoleColor.DarkGray);
+        Print("\n--// Funkciók navigálása gombnyomással lehetséges. Az elérhető gombokat és funkciókat kilistázzuk. //--\n");
+        CC(ConsoleColor.Green);
+        Print("\n\nNyomjon meg egy gombot a továbblépéshez!\n");
         Console.ReadKey();
         Console.Clear();
     }
@@ -96,29 +104,55 @@ public static class UIManager
             keys.TryGetValue(key, out functionDesc);
             if (colors == null)
             {
-                Console.Write("| ");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("[ ");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write(key.ToString());
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write(" ]");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($": {functionDesc} |");
+                Print("| ");
+                CC(ConsoleColor.White);
+                Print("[ ");
+                CC(ConsoleColor.Green);
+                Print(key.ToString());
+                CC(ConsoleColor.White);
+                Print(" ]");
+                CC(ConsoleColor.Green);
+                Print($": {functionDesc} |");
             }
             else
             {
-                Console.Write("| ");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("[ ");
+                Print("| ");
+                CC(ConsoleColor.White);
+                Print("[ ");
                 Console.ForegroundColor = colors[colorIndex];
-                Console.Write(key.ToString());
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write(" ]");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($": {functionDesc} |");
+                Print(key.ToString());
+                CC(ConsoleColor.White);
+                Print(" ]");
+                CC(ConsoleColor.Green);
+                Print($": {functionDesc} |");
             }
             colorIndex++;
         }
+        Console.WriteLine();
+    }
+    public static void PrintError(int code)
+    {
+        CC(ConsoleColor.DarkRed);
+        Print("HIBA");
+        CC(ConsoleColor.White);
+        Print(": ");
+        switch (code)
+        {
+            case 0:
+                {
+                    Print("Egyéb hiba történt.\n");
+                    break;
+                }
+            case 1:
+                {
+                    Print("Érvénytelen bemenet.\n");
+                    break;
+                }
+        }
+        CC(ConsoleColor.Green);
+    }
+    private static void CC(ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
     }
 }

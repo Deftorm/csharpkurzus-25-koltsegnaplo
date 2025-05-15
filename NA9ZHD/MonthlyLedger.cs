@@ -11,16 +11,16 @@ namespace NA9ZHD;
 public class MonthlyLedger
 {
     private ushort year { get; set; }
-    private byte month { get; set; }
+    private Months month { get; set; }
     private List<Tranzaction> tranzactions { get; set; }
-    public MonthlyLedger(ushort year, byte month)
+    public MonthlyLedger(ushort year, Months month)
     {
         this.year = year;
         this.month = month;
         tranzactions = new List<Tranzaction>();
     }
-    public MonthlyLedger(ushort year, byte month, List<Tranzaction> tranzakciok) : this(year, month)
+    public MonthlyLedger(ushort year, Months month, List<Tranzaction> tranzactions) : this(year, month)
     {
-        this.tranzactions = tranzakciok;
+        this.tranzactions = tranzactions;
     }
 }

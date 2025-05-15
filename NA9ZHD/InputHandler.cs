@@ -10,6 +10,10 @@ namespace NA9ZHD;
 /// </summary>
 public static class InputHandler
 {
+    /// <summary>
+    /// Ezzel lehet tetszőleges számú tárggyal rendelkező menü inputját kezelni.
+    /// </summary>
+    /// <param name="actions">Tartalmazza a lenyomandó gombot, és a hozzárendelt lamdbával hívott függvényt</param>
     public static void HandleMenuInput(Dictionary<ConsoleKey, Action> actions)
     {
         while (true)
@@ -17,6 +21,7 @@ public static class InputHandler
             var key = Console.ReadKey(intercept: true).Key;
             if (actions.TryGetValue(key, out var action))
             {
+                Console.Clear();
                 action();
                 break;
             }
