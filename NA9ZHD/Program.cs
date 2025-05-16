@@ -1,4 +1,6 @@
-﻿using NA9ZHD;
+﻿using System;
+
+using NA9ZHD;
 /// <summary>
 /// Itt történik a fő vezérlés. Vannak főbb metódusok amelyek az elágazásokat/funkciókat képviselik.
 /// </summary>
@@ -51,12 +53,81 @@ internal class Program
             { ConsoleKey.Escape,  () => Environment.Exit(0) },
         };
         //Bekérés
-        InputHandler.HandleMenuInput(menuPoints);
+        while (true)
+        {
+            var key = Console.ReadKey(intercept: true).Key;
+            if (menuPoints.TryGetValue(key, out var action))
+            {
+                Console.Clear();
+                action();
+                break;
+            }
+        }
     }
     private static void AddNewMonth()
     {
         Console.Title = "ÚJ HÓNAP";
         Console.CursorVisible = true;
-        
+        UIManager.Print("\n\n\n");
+
+        //ÉV BEKÉRÉSE
+        UIManager.Print("Év: ");
+        int cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        int cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        UIManager.PrintTip(0, "Adjon meg egy évszámot amely legalább 1900\n");
+        bool goodInput = false;
+        ushort year = 0;
+        string rawInput = "";
+        do
+        {
+            Console.SetCursorPosition(cursorCol, cursorRow);
+            UIManager.ClearInputLeftovers(cursorRow, cursorCol, rawInput.Length);
+            try
+            {
+                UIManager.CC(ConsoleColor.Yellow);
+                rawInput = Console.ReadLine();
+                UIManager.CC(ConsoleColor.Green);
+                UIManager.ClearLine(1);
+                year = Convert.ToUInt16(rawInput);
+                if (year >= 1900) goodInput = true;
+                else UIManager.PrintError(2, 1);
+            }
+            catch (FormatException) { UIManager.PrintError(1, 1); }
+            catch (Exception) { UIManager.PrintError(-1, 1); }
+        }
+        while (!goodInput);
+
+        //HÓNAP BEKÉRÉSE
+        UIManager.ClearLine(0);
+        UIManager.PrintTip(0, "Adja meg a hónap számát! Pl.: Április --> 4\n");
+        cursorRow++;
+        Console.SetCursorPosition(0, cursorRow);
+        UIManager.Print("Hónap: ");
+        cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        goodInput = false;
+        Months month = Months.JANUÁR;
+        do
+        {
+            Console.SetCursorPosition(cursorCol, cursorRow);
+            UIManager.ClearInputLeftovers(cursorRow, cursorCol, rawInput.Length);
+            try
+            {
+                UIManager.CC(ConsoleColor.Yellow);
+                rawInput = Console.ReadLine();
+                UIManager.CC(ConsoleColor.Green);
+                UIManager.ClearLine(1);
+                if (int.TryParse(rawInput, out int monthInt) &&
+                Enum.IsDefined(typeof(Months), monthInt))
+                {
+                    month = (Months)monthInt;
+                    goodInput = true;
+                }
+                else  UIManager.PrintError(1, 2);
+            }
+            catch(FormatException) { UIManager.PrintError(1, 1); }
+            catch(Exception) { UIManager.PrintError(-1, 1); }
+        }
+        while (!goodInput);
     }
 }

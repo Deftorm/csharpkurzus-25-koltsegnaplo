@@ -130,8 +130,9 @@ public static class UIManager
         }
         Console.WriteLine();
     }
-    public static void PrintError(int code)
+    public static void PrintError(int code, int row)
     {
+        Console.CursorTop = row;
         CC(ConsoleColor.DarkRed);
         Print("HIBA");
         CC(ConsoleColor.White);
@@ -140,7 +141,7 @@ public static class UIManager
         {
             case 0:
                 {
-                    Print("Egyéb hiba történt.\n");
+                    Print("Fájlkezelési hiba történt.\n");
                     break;
                 }
             case 1:
@@ -148,11 +149,58 @@ public static class UIManager
                     Print("Érvénytelen bemenet.\n");
                     break;
                 }
+            case 2:
+                {
+                    Print("A várt érték intervallumon kívülre esett.\n");
+                    break;
+                }
+            default:
+                {
+                    Print("Egyéb hiba történt.\n");
+                    break;
+                }
         }
         CC(ConsoleColor.Green);
     }
-    private static void CC(ConsoleColor color)
+    public static void CC(ConsoleColor color)
     {
         Console.ForegroundColor = color;
+    }
+    public static void ClearLine(int row)
+    {
+        Console.CursorTop = row;
+        Console.CursorLeft = 0;
+        for (int i = 0; i < Console.WindowWidth; i++) Print(" ");
+        Console.CursorLeft = 0;
+    }
+    /// <summary>
+    /// Rossz input esetén eltűntetni az előző input maradványait.
+    /// </summary>
+    /// <param name="row">Melyik sor</param>
+    /// <param name="column">Melyik oszlopától kezdődik az input</param>
+    /// <param name="length">Hány karakter hosszú volt a bekérés?</param>
+    public static void ClearInputLeftovers(int row, int column, int length)
+    {
+        Console.CursorTop = row;
+        Console.CursorLeft = column;
+        for (int i = 0; i < length; i++) Print(" ");
+        Console.CursorTop = row;
+        Console.CursorLeft = column;
+    }
+    /// <summary>
+    /// Lekérdezi a kurzor pozícióját.
+    /// </summary>
+    /// <returns>Kételemű tömb, első érték sor, második oszlop</returns>
+    public static int[] GetConsoleCursorPosition()
+    {
+        return new int[] { Console.CursorTop, Console.CursorLeft };
+    }
+    public static void PrintTip(int row, string text)
+    {
+        Console.CursorTop = row;
+        Console.CursorLeft = 0;
+        CC(ConsoleColor.DarkGray);
+        Print(text);
+        CC(ConsoleColor.Green);
     }
 }

@@ -59,3 +59,32 @@ public enum Months
     NOVEMBER = 11,
     DECEMBER = 12
 }
+
+public enum TransactionCategory
+{
+    // Alapkiadások
+    Food,               // élelmiszer, bolt
+    Dining,             // étterem, kávézó
+    Transport,          // tömegközlekedés, taxi, üzemanyag
+    Housing,            // albérlet, rezsi
+    Utilities,          // áram, víz, internet
+    Health,             // gyógyszer, orvos, biztosítás
+    Education,          // tankönyv, kurzus, tandíj
+
+    // Személyes kiadások
+    Entertainment,      // mozi, streaming, játék
+    Shopping,           // ruha, elektronika, kütyük
+    Travel,             // utazás, szállás
+    Gifts,              // ajándék, adomány
+    Fitness,            // edzőterem, sportfelszerelés
+    Subscriptions,      // havi előfizetések (Netflix, Spotify stb.)
+
+    // Bevétel típusok
+    Salary,             // fizetés
+    Freelance,          // másodállás, projektmunkák
+    Scholarship,        // ösztöndíj
+    Support,            // szülői vagy állami támogatás
+    Refund,             // visszatérítés
+    // Egyéb
+    Other,
+}
