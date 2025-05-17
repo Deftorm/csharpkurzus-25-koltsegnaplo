@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace NA9ZHD;
 /// <summary>
-/// A konzolos applikáció "frontend" része.
-/// Kezeli a bekérést és a kiíratást is.
-/// 
-/// Mi? Azt mondtam kezeli a bekérést IS? Hülye vagyok én? Meg akarom törni a SRP-t? Mi a f@? Ha input, akkor InputHandler.cs viszont látásra.
-/// </summary>
+/// A konzolos applikáció "frontend" része. Kiíratásért felelős.
+///</summary>
 public static class UIManager
 {
+    /// <summary>
+    /// Segít visszatérni egy adott sorba hogy a kiíratás onnan folytatódjon. Először a tranzakció felvétel során került felhasználásra.
+    /// </summary>
+    public static int consoleCursorRowHelper = 0;
+
     /// <summary>
     /// Behelyettesíti a Console.Write metódus szerepét. Manuálisan kell sortörést a végére biggyeszteni
     /// </summary>
@@ -146,12 +148,17 @@ public static class UIManager
                 }
             case 1:
                 {
-                    Print("Érvénytelen bemenet.\n");
+                    Print("Érvénytelen bemeneti formátum.\n");
                     break;
                 }
             case 2:
                 {
                     Print("A várt érték intervallumon kívülre esett.\n");
+                    break;
+                }
+            case 3:
+                {
+                    Print("Nem megfelelő tranzakció kategória.\n");
                     break;
                 }
             default:

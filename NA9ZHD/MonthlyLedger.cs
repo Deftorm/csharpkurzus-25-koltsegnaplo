@@ -12,15 +12,19 @@ public class MonthlyLedger
 {
     private ushort year { get; set; }
     private Months month { get; set; }
-    private List<Tranzaction> tranzactions { get; set; }
+    private List<Transaction> transactions { get; set; }
     public MonthlyLedger(ushort year, Months month)
     {
         this.year = year;
         this.month = month;
-        tranzactions = new List<Tranzaction>();
+        transactions = new List<Transaction>();
     }
-    public MonthlyLedger(ushort year, Months month, List<Tranzaction> tranzactions) : this(year, month)
+    public MonthlyLedger(ushort year, Months month, List<Transaction> transactions) : this(year, month)
     {
-        this.tranzactions = tranzactions;
+        this.transactions = transactions;
     }
+    public Months GetMonth() { return month; }
+    public ushort GetYear() { return year; }
+    public List<Transaction> GetTransactions() { return transactions; }
+    public void AddTransaction(Transaction transaction) { transactions.Add(transaction);  }
 }

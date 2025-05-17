@@ -33,22 +33,17 @@ public class DataWarden
     /// Új hónap beszúrása a tárolóba.
     /// </summary>
     /// <param name="month">Amit be kell szúrni hónap</param>
-    public void StoreMonth(MonthlyLedger month)
-    {
-        months.Add(month);
-    }
+    public void StoreMonth(MonthlyLedger month) { months.Add(month); }
     public void LoadAllMonthsFromFile()
     {
         throw new NotImplementedException();
     }
     public void SaveAllMonths()
     {
-        throw new NotImplementedException();
+        foreach (MonthlyLedger month in months) FileManager.WriteMonthToFileJSON(month);
     }
-    public List<MonthlyLedger> GetMonthlyLedgers()
-    {
-        return months;
-    }
+    public List<MonthlyLedger> GetMonthlyLedgers() { return months; }
+    public string GetFolderPath() { return folderPath; }
 }
 
 public enum Months

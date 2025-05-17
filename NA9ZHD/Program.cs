@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 
 using NA9ZHD;
 /// <summary>
@@ -8,7 +9,9 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        Startup();
+        Console.CursorVisible = false;
+        DataWarden.Instance().CheckDataFolderExistance();
+        UIManager.Welcome();
         MainMenu();
     }
 
@@ -19,19 +22,11 @@ internal class Program
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// <summary>
-    /// Ellenőrizzük az adatos mappa létezését és üdvözüljük a felhasználót.
-    /// </summary>
-    private static void Startup()
-    {
-        Console.CursorVisible = false;
-        DataWarden.Instance().CheckDataFolderExistance();
-        UIManager.Welcome();
-    }
-    /// <summary>
     /// Belépés utáni első adatbekérés helye lesz. Ezen a ponton lehet az összes funkció felé elindulni.
     /// </summary>
     private static void MainMenu()
     {
+        Console.Title = "Költségnapló Alkalmazás";
         Console.Clear();
         //Előkészítés - UI
         Dictionary<string, string> availableKeys = new Dictionary<string, string>();
@@ -136,7 +131,6 @@ internal class Program
         while (!goodInput);
         //Új hónap objektum létrehozása és eltárolása
         MonthlyLedger monthlyLedger = new MonthlyLedger(year, month);
-        DataWarden.Instance().StoreMonth(monthlyLedger);
         //Azonnali tranzakció feltöltés rákérdezés
         UIManager.ClearLine(0);
         Console.SetCursorPosition(0, 5);
@@ -152,15 +146,149 @@ internal class Program
             if (key == ConsoleKey.Y)
             {
                 Console.Clear();
+                Console.Title = monthlyLedger.GetMonth().ToString() + " - Tranzakciók felvétele";
+                UIManager.consoleCursorRowHelper = 3;
                 while (AddNewTranzaction(monthlyLedger)) ;
                 break;
             }
             else if (key == ConsoleKey.N) break;
         }
+        DataWarden.Instance().StoreMonth(monthlyLedger);
         MainMenu();
     }
     private static bool AddNewTranzaction(MonthlyLedger month)
     {
-        return false;
+        DateTime date = DateTime.MinValue;
+        bool isExpense = true;
+        TransactionCategory category = TransactionCategory.Food;
+        int amount = 0;
+        string description = String.Empty;
+
+        bool goodInput = false;
+        string rawInput = "";
+
+        Console.CursorVisible = true;
+        UIManager.PrintTip(0, "Dátum formátuma: 1900.01.01 00:00:00\n");
+        UIManager.PrintTip(2, "A megszakításhoz nyomja meg az ESC gombot.\n");
+        Console.CursorTop = UIManager.consoleCursorRowHelper;
+        UIManager.Print("Dátum: ");
+        int cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        int cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        do
+        {
+            Console.SetCursorPosition(cursorCol, cursorRow);
+            UIManager.ClearInputLeftovers(cursorRow, cursorCol, rawInput.Length);
+            ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+            if (keyInfo.Key == ConsoleKey.Escape) return false; // megszakítás
+            try
+            {
+                UIManager.CC(ConsoleColor.Yellow);
+                UIManager.Print(keyInfo.KeyChar.ToString());
+                rawInput = keyInfo.KeyChar + Console.ReadLine();
+                UIManager.CC(ConsoleColor.Green);
+                date = Convert.ToDateTime(rawInput);
+                goodInput = true;
+                UIManager.ClearLine(1);
+            }
+            catch (FormatException) { UIManager.PrintError(1, 1); }
+            catch (ArgumentOutOfRangeException) { UIManager.PrintError(2, 1); }
+            catch (Exception) { UIManager.PrintError(-1, 1);  }
+        }
+        while (!goodInput);
+        goodInput = false;
+        Console.SetCursorPosition(cursorCol + rawInput.Length, cursorRow);
+        UIManager.Print(" | Kiadás: ");
+        cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        UIManager.ClearLine(2);
+        UIManager.PrintTip(0, "'true' ha igen, 'false' ha nem");
+        Console.SetCursorPosition(cursorCol, cursorRow);
+        do
+        {
+            Console.SetCursorPosition(cursorCol, cursorRow);
+            UIManager.ClearInputLeftovers(cursorRow, cursorCol, rawInput.Length);
+            try
+            {
+                UIManager.CC(ConsoleColor.Yellow);
+                rawInput = Console.ReadLine();
+                UIManager.CC(ConsoleColor.Green);
+                isExpense = Convert.ToBoolean(rawInput);
+                goodInput = true;
+                UIManager.ClearLine(1);
+            }
+            catch (FormatException) { UIManager.PrintError(1, 1); }
+            catch (ArgumentOutOfRangeException) { UIManager.PrintError(2, 1); }
+            catch(Exception) { UIManager.PrintError(-1, 1); }
+        }
+        while (!goodInput);
+        goodInput = false;
+        Console.SetCursorPosition(cursorCol + rawInput.Length, cursorRow);
+        UIManager.Print(" | Kategória: ");
+        cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        UIManager.PrintTip(0, "'Food (1) Dining (2) Transport (3) Housing (4) Utilities (5) Health (6) Education (7) Entertainment (8) Shopping (9) Travel (10) Gifts (11) Fitness (12) Subscriptions (13) Salary (14) Freelance (15) Scholarship (16) Support (17) Refund (18) Other (19)");
+        Console.SetCursorPosition(cursorCol, cursorRow);
+        do
+        {
+            Console.SetCursorPosition(cursorCol, cursorRow);
+            UIManager.ClearInputLeftovers(cursorRow, cursorCol, rawInput.Length);
+            try
+            {
+                UIManager.CC(ConsoleColor.Yellow);
+                rawInput = Console.ReadLine();
+                UIManager.CC(ConsoleColor.Green);
+                int categoryInt = Convert.ToInt32(rawInput);
+                if ((categoryInt < 1) || (categoryInt > 19) || (isExpense && categoryInt > 13) || (!isExpense && categoryInt < 14)) throw new ArgumentOutOfRangeException();
+                else
+                {
+                    category = (TransactionCategory)categoryInt;
+                    goodInput = true;
+                }
+                UIManager.ClearLine(1);
+            }
+            catch (FormatException) { UIManager.PrintError(1, 1); }
+            catch (ArgumentOutOfRangeException) { UIManager.PrintError(2, 1); }
+            catch (Exception) { UIManager.PrintError(-1, 1); }
+        }
+        while (!goodInput);
+        goodInput = false;
+        Console.SetCursorPosition(cursorCol + rawInput.Length, cursorRow);
+        UIManager.Print(" | Összeg: ");
+        cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        UIManager.PrintTip(0, "A tranzakció összege. Nem lehet negatív számot megadni");
+        Console.SetCursorPosition(cursorCol, cursorRow);
+        do
+        {
+            Console.SetCursorPosition(cursorCol, cursorRow);
+            UIManager.ClearInputLeftovers(cursorRow, cursorCol, rawInput.Length);
+            try
+            {
+                UIManager.CC(ConsoleColor.Yellow);
+                rawInput = Console.ReadLine();
+                UIManager.CC(ConsoleColor.Green);
+                amount = Convert.ToInt32(rawInput);
+                goodInput = true;
+                UIManager.ClearLine(1);
+            }
+            catch (FormatException) { UIManager.PrintError(1, 1); }
+            catch (ArgumentOutOfRangeException) { UIManager.PrintError(2, 1); }
+            catch (Exception) { UIManager.PrintError(-1, 1); }
+        }
+        while (!goodInput);
+        Console.SetCursorPosition(cursorCol + rawInput.Length, cursorRow);
+        UIManager.Print(" | Leírás: ");
+        cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        UIManager.PrintTip(0, "Rövid, pár szavas leírás a tranzakcióról (pl.: helyszín).");
+        Console.SetCursorPosition(cursorCol, cursorRow);
+        UIManager.CC(ConsoleColor.Yellow);
+        description = Console.ReadLine();
+        UIManager.CC(ConsoleColor.Green);
+
+        Transaction transaction = new Transaction(date, isExpense, category, amount, description);
+        month.AddTransaction(transaction);
+        UIManager.consoleCursorRowHelper++;
+        return true;
     }
 }
