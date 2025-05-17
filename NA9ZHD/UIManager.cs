@@ -174,7 +174,7 @@ public static class UIManager
         Console.CursorLeft = 0;
     }
     /// <summary>
-    /// Rossz input esetén eltűntetni az előző input maradványait.
+    /// Rossz input esetén eltűntetni az előző input maradványait a konzolról.
     /// </summary>
     /// <param name="row">Melyik sor</param>
     /// <param name="column">Melyik oszlopától kezdődik az input</param>
@@ -193,8 +193,13 @@ public static class UIManager
     /// <returns>Kételemű tömb, első érték sor, második oszlop</returns>
     public static int[] GetConsoleCursorPosition()
     {
-        return new int[] { Console.CursorTop, Console.CursorLeft };
+        return [Console.CursorTop, Console.CursorLeft];
     }
+    /// <summary>
+    /// Tipp kiíratása a felhasználónak, hogy legyen valami halovány fingja mit kell csinálni.
+    /// </summary>
+    /// <param name="row">Melyik sorba kell írni a tippet.</param>
+    /// <param name="text">Mi a tipp maga.</param>
     public static void PrintTip(int row, string text)
     {
         Console.CursorTop = row;

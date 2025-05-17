@@ -32,6 +32,7 @@ internal class Program
     /// </summary>
     private static void MainMenu()
     {
+        Console.Clear();
         //Előkészítés - UI
         Dictionary<string, string> availableKeys = new Dictionary<string, string>();
         availableKeys["1"] = "Új hónap";
@@ -98,6 +99,7 @@ internal class Program
         while (!goodInput);
 
         //HÓNAP BEKÉRÉSE
+        // Igen, ez tiszta duplikált kód, de nem tudtam most jobbat kitalálni...
         UIManager.ClearLine(0);
         UIManager.PrintTip(0, "Adja meg a hónap számát! Pl.: Április --> 4\n");
         cursorRow++;
@@ -117,17 +119,48 @@ internal class Program
                 rawInput = Console.ReadLine();
                 UIManager.CC(ConsoleColor.Green);
                 UIManager.ClearLine(1);
-                if (int.TryParse(rawInput, out int monthInt) &&
-                Enum.IsDefined(typeof(Months), monthInt))
+                if (int.TryParse(rawInput, out int monthInt))
                 {
-                    month = (Months)monthInt;
-                    goodInput = true;
+                    if (Enum.IsDefined(typeof(Months), monthInt))
+                    {
+                        month = (Months)monthInt;
+                        goodInput = true;
+                    }
+                    else UIManager.PrintError(2, 1);
                 }
-                else  UIManager.PrintError(1, 2);
+                else throw new FormatException();
             }
             catch(FormatException) { UIManager.PrintError(1, 1); }
             catch(Exception) { UIManager.PrintError(-1, 1); }
         }
         while (!goodInput);
+        //Új hónap objektum létrehozása és eltárolása
+        MonthlyLedger monthlyLedger = new MonthlyLedger(year, month);
+        DataWarden.Instance().StoreMonth(monthlyLedger);
+        //Azonnali tranzakció feltöltés rákérdezés
+        UIManager.ClearLine(0);
+        Console.SetCursorPosition(0, 5);
+        Dictionary<string, string> availableKeys = new Dictionary<string, string>();
+        availableKeys["Y"] = "Igen";
+        availableKeys["N"] = "Nem";
+        ConsoleColor[] consoleColors = { ConsoleColor.Green, ConsoleColor.DarkRed };
+        UIManager.Print("Feltöltés tranzakciókkal most?\n");
+        UIManager.PrintAvailableKeys(availableKeys, consoleColors);
+        while(true)
+        {
+            var key = Console.ReadKey(intercept: true).Key;
+            if (key == ConsoleKey.Y)
+            {
+                Console.Clear();
+                while (AddNewTranzaction(monthlyLedger)) ;
+                break;
+            }
+            else if (key == ConsoleKey.N) break;
+        }
+        MainMenu();
+    }
+    private static bool AddNewTranzaction(MonthlyLedger month)
+    {
+        return false;
     }
 }

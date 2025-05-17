@@ -25,10 +25,17 @@ public class DataWarden
         }
         return instance;
     }
-
     public void CheckDataFolderExistance()
     {
         if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+    }
+    /// <summary>
+    /// Új hónap beszúrása a tárolóba.
+    /// </summary>
+    /// <param name="month">Amit be kell szúrni hónap</param>
+    public void StoreMonth(MonthlyLedger month)
+    {
+        months.Add(month);
     }
     public void LoadAllMonthsFromFile()
     {
@@ -63,28 +70,26 @@ public enum Months
 public enum TransactionCategory
 {
     // Alapkiadások
-    Food,               // élelmiszer, bolt
-    Dining,             // étterem, kávézó
-    Transport,          // tömegközlekedés, taxi, üzemanyag
-    Housing,            // albérlet, rezsi
-    Utilities,          // áram, víz, internet
-    Health,             // gyógyszer, orvos, biztosítás
-    Education,          // tankönyv, kurzus, tandíj
-
+    Food = 1,               // élelmiszer, bolt
+    Dining = 2,             // étterem, kávézó
+    Transport = 3,          // tömegközlekedés, taxi, üzemanyag
+    Housing = 4,            // albérlet, rezsi
+    Utilities = 5,          // áram, víz, internet
+    Health = 6,             // gyógyszer, orvos, biztosítás
+    Education = 7,          // tankönyv, kurzus, tandíj
     // Személyes kiadások
-    Entertainment,      // mozi, streaming, játék
-    Shopping,           // ruha, elektronika, kütyük
-    Travel,             // utazás, szállás
-    Gifts,              // ajándék, adomány
-    Fitness,            // edzőterem, sportfelszerelés
-    Subscriptions,      // havi előfizetések (Netflix, Spotify stb.)
-
+    Entertainment = 8,      // mozi, streaming, játék
+    Shopping = 9,           // ruha, elektronika, kütyük
+    Travel = 10,             // utazás, szállás
+    Gifts = 11,              // ajándék, adomány
+    Fitness = 12,            // edzőterem, sportfelszerelés
+    Subscriptions = 13,      // havi előfizetések (Netflix, Spotify stb.)
     // Bevétel típusok
-    Salary,             // fizetés
-    Freelance,          // másodállás, projektmunkák
-    Scholarship,        // ösztöndíj
-    Support,            // szülői vagy állami támogatás
-    Refund,             // visszatérítés
+    Salary = 14,             // fizetés
+    Freelance = 15,          // másodállás, projektmunkák
+    Scholarship = 16,        // ösztöndíj
+    Support = 17,            // szülői vagy állami támogatás
+    Refund = 18,             // visszatérítés
     // Egyéb
-    Other,
+    Other = 19,
 }
