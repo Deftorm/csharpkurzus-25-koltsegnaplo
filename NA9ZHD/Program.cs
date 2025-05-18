@@ -5,7 +5,9 @@ using NA9ZHD;
 
 // Egyébként van egy kis problematika ami eléggé bökködi az agyamat. Szinte minden static.... De azért static, mert felesleges adott osztályból példányosítani
 // csak azért hogy akkor azon az objektumon keresztül hívjam meg a metódust. Pl: UIManager.... abból miért lenne példény?
-// Nem a legszebb projektem, volt már jobb is tbh.
+// Nem a legszebb projektem, volt már jobb is tbh. (De mindenképp volt rosszabb is lol)
+
+//Ez az egész kód tiszta dissapointment smh.
 
 
 
@@ -20,15 +22,13 @@ internal class Program
         DataWarden.Instance.CheckDataFolderExistance();
         DataWarden.Instance.LoadAllMonthsFromFile();
         UIManager.Welcome();
-        MainMenu();
+        while(true) MainMenu();
     }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     /// <summary>
     /// Belépés utáni első adatbekérés helye lesz. Ezen a ponton lehet az összes funkció felé elindulni.
     /// </summary>
@@ -50,13 +50,17 @@ internal class Program
         //Előkészítés - Input
         Dictionary<ConsoleKey, Action> menuPoints = new Dictionary<ConsoleKey, Action>
         {
-            { ConsoleKey.D1,  () => AddNewMonth()},
-            { ConsoleKey.D2,  () => throw new NotImplementedException()},
+            { ConsoleKey.D1,  AddNewMonth},
+            { ConsoleKey.D2, ListMonths},
             { ConsoleKey.D3,  () => throw new NotImplementedException()},
             { ConsoleKey.D4,  () => throw new NotImplementedException()},
-            { ConsoleKey.Escape,  () => Exit()},
+            { ConsoleKey.Escape,  Exit},
         };
         //Bekérés
+        ConsoleKeyInputHandling(menuPoints);
+    }
+    private static void ConsoleKeyInputHandling(Dictionary<ConsoleKey, Action> menuPoints)
+    {
         while (true)
         {
             var key = Console.ReadKey(intercept: true).Key;
@@ -174,7 +178,6 @@ internal class Program
             else if (key == ConsoleKey.N) break;
         }
         DataWarden.Instance.StoreMonth(monthlyLedger);
-        MainMenu();
     }
     /// <summary>
     /// Ennek a repetitív kódjáról nem beszélnék. Nagyon zavar engem is, rettenetesen zavar, de nem tudom hogy lehetne ezt jobban leszűkíteni. 
@@ -319,5 +322,86 @@ internal class Program
         month.AddTransaction(transaction);
         UIManager.consoleCursorRowHelper++;
         return true;
+    }
+    private static void ListMonths()
+    {
+        List<MonthlyLedger> ledgerList = DataWarden.Instance.GetMonthlyLedgers();
+        if (ledgerList.Count == 0) return;
+        UIManager.PrintTip(0, "Add meg a hónap sorszámát!\n\n");
+        for (int i = 0; i < ledgerList.Count; i++)
+        {
+            UIManager.CC(ConsoleColor.White);
+            UIManager.Print("[ ");
+            UIManager.CC(ConsoleColor.Cyan);
+            UIManager.Print(i.ToString());
+            UIManager.CC(ConsoleColor.White);
+            UIManager.Print(" ] ");
+            UIManager.CC(ConsoleColor.Green);
+            UIManager.Print(ledgerList[i].GetYear() + " " + ledgerList[i].GetMonth()+"\n");
+        }
+        UIManager.Print("\nMegtekintendő hónap: ");
+        Console.CursorVisible = true;
+        int cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        int cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        bool goodInput = false;
+        uint viewIndex = 0;
+        string rawInput = "";
+        do
+        {
+            Console.SetCursorPosition(cursorCol, cursorRow);
+            UIManager.ClearInputLeftovers(cursorRow, cursorCol, rawInput.Length);
+            try
+            {
+                UIManager.CC(ConsoleColor.Yellow);
+                rawInput = Console.ReadLine();
+                UIManager.CC(ConsoleColor.Green);
+                UIManager.ClearLine(1);
+                viewIndex = Convert.ToUInt32(rawInput);
+                if (viewIndex < 0 || viewIndex >= ledgerList.Count) throw new ArgumentOutOfRangeException();
+                goodInput = true;
+            }
+            catch (FormatException) { UIManager.PrintError(1, 1); }
+            catch (ArgumentOutOfRangeException) { UIManager.PrintError(2, 1);  }
+            catch (Exception) { UIManager.PrintError(-1, 1); }
+        }
+        while (!goodInput);
+        ViewMonth(ledgerList[Convert.ToInt32(viewIndex)]);
+    }
+    private static void ViewMonth(MonthlyLedger ledger)
+    {
+        Console.Clear();
+        Console.Title = ledger.GetYear() + " " + ledger.GetMonth() + " - Megtekintés";
+        Console.CursorVisible = false;
+        //Menü elkészítése
+        Dictionary<string, string> availableKeys = new Dictionary<string, string>();
+        availableKeys["1"] = "További tranzakciók felvétele";
+        availableKeys["ESC"] = "Főmenü";
+        ConsoleColor[] consoleColors = { ConsoleColor.Cyan, ConsoleColor.DarkRed };
+        //Menü kiíratás
+        UIManager.PrintAvailableKeys(availableKeys, consoleColors);
+        
+        Statistician statistician = new MonthStatistician(ledger);
+        statistician.ShowData();
+        statistician.ShowProfit();
+        
+        //Menü funkcionalitás beállítás
+        Dictionary<ConsoleKey, Action> menuPoints = new Dictionary<ConsoleKey, Action>
+        {
+            { ConsoleKey.D1,  () => {
+                Console.Clear();
+                Console.Title = ledger.GetMonth().ToString() + " - Tranzakciók felvétele";
+                UIManager.consoleCursorRowHelper = 3;
+                while(AddNewTranzaction(ledger)) ; }},
+            { ConsoleKey.Escape,  MainMenu},
+        };
+        ConsoleKeyInputHandling(menuPoints);
+    }
+    private static void ListYears()
+    {
+
+    }
+    private void ViewYear()
+    {
+
     }
 }

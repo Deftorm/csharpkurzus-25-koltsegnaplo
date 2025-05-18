@@ -45,6 +45,11 @@ public class DataWarden
         foreach (MonthlyLedger month in months) FileManager.WriteMonthToFileJSON(month);
     }
     public List<MonthlyLedger> GetMonthlyLedgers() { return months; }
+    public void UpdateMonthlyLedger(int index, MonthlyLedger month)
+    {
+        if (index >= 0 && index < months.Count) months[index] = month;
+        else throw new IndexOutOfRangeException();
+    }
     public string GetFolderPath() { return folderPath; }
 }
 

@@ -225,4 +225,48 @@ public static class UIManager
         Print(text);
         CC(ConsoleColor.Green);
     }
+    public static void PrintTransaction(Transaction transaction)
+    {
+        Print("Dátum: ");
+        CC(ConsoleColor.Yellow);
+        Print($"{transaction.date}");
+        CC(ConsoleColor.Green);
+        Print(" | Kiadás: ");
+        if(transaction.isExpense) CC(ConsoleColor.Red);
+        else CC(ConsoleColor.Blue);
+        Print($"{transaction.isExpense}");
+        CC(ConsoleColor.Green);
+        Print(" | Kategória: ");
+        CC(ConsoleColor.Yellow);
+        Print($"{transaction.transactionCategory}");
+        CC(ConsoleColor.Green);
+        Print(" | Összeg: ");
+        CC(ConsoleColor.Cyan);
+        Print($"{transaction.amount}");
+        CC(ConsoleColor.Green);
+        Print(" | Leírás: ");
+        CC(ConsoleColor.Yellow);
+        Print(transaction.description + "\n");
+        CC(ConsoleColor.Green);
+    }
+    public static void PrintMonthProfit(int[] calculations, byte profitDifferenceColorCode)
+    {
+        CC(ConsoleColor.Green);
+        Print("\nBevétel: ");
+        CC(ConsoleColor.Cyan);
+        Print($"{calculations[0]}\n");
+        CC(ConsoleColor.Green);
+        Print("Kiadás: ");
+        CC(ConsoleColor.Red);
+        Print($"{calculations[1]}\n");
+        CC(ConsoleColor.Green);
+        Print("Profit: ");
+        if(profitDifferenceColorCode == 0) CC(ConsoleColor.DarkGreen);
+        else if(profitDifferenceColorCode == 1) CC(ConsoleColor.Blue);
+        else if(profitDifferenceColorCode == 2) CC(ConsoleColor.DarkYellow);
+        else if(profitDifferenceColorCode == 3) CC(ConsoleColor.DarkMagenta);
+        else CC(ConsoleColor.DarkRed);
+        Print($"{calculations[2]}\n");
+        CC(ConsoleColor.Green);
+    }
 }
