@@ -7,23 +7,28 @@ using System.Threading.Tasks;
 
 namespace NA9ZHD;
 /// <summary>
-/// Adatokat tároló Singleton osztály
+/// Adatokat tároló Singleton osztály.... igen, singleton.... igen, a létrehozott objektumok tárolása futásidő alatt... igen, rossz, de naaa :(
 /// </summary>
 public class DataWarden
 {
+    private static readonly object padlock = new object(); //hogy szálbiztos legyen... nem mintha lenne itt async
     private static DataWarden? instance;
-    
+
     private readonly string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\KOLTSEGNAPLO";
     private List<MonthlyLedger> months = new List<MonthlyLedger>();
 
     private DataWarden() { }
-    public static DataWarden Instance()
+
+    public static DataWarden Instance
     {
-        if (instance == null)
+        get
         {
-            instance = new DataWarden();
+            lock (padlock)
+            {
+                if (instance == null) instance = new DataWarden(); 
+                return instance;
+            }
         }
-        return instance;
     }
     public void CheckDataFolderExistance()
     {
@@ -34,10 +39,7 @@ public class DataWarden
     /// </summary>
     /// <param name="month">Amit be kell szúrni hónap</param>
     public void StoreMonth(MonthlyLedger month) { months.Add(month); }
-    public void LoadAllMonthsFromFile()
-    {
-        throw new NotImplementedException();
-    }
+    public void LoadAllMonthsFromFile() { FileManager.ReadAllMonthsFromFilesJSON(); }
     public void SaveAllMonths()
     {
         foreach (MonthlyLedger month in months) FileManager.WriteMonthToFileJSON(month);

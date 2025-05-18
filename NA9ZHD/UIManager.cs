@@ -158,7 +158,17 @@ public static class UIManager
                 }
             case 3:
                 {
-                    Print("Nem megfelelő tranzakció kategória.\n");
+                    Print("Nem megfelelő tranzakció kategória. Ha kiadás, akkor 0 < x < 14. Ha bevétel, akkor 13 < x < 20.\n");
+                    break;
+                }
+            case 4:
+                {
+                    Print("Ehhez az évhez mind a 12 hónap fel van jegyezve.\n");
+                    break;
+                }
+            case 5:
+                {
+                    Print("Ez a hónap már fel van jegyezve ebben az évben.\n");
                     break;
                 }
             default:

@@ -1,7 +1,14 @@
 ﻿using System;
-using System.Security.Principal;
 
 using NA9ZHD;
+
+
+// Egyébként van egy kis problematika ami eléggé bökködi az agyamat. Szinte minden static.... De azért static, mert felesleges adott osztályból példányosítani
+// csak azért hogy akkor azon az objektumon keresztül hívjam meg a metódust. Pl: UIManager.... abból miért lenne példény?
+// Nem a legszebb projektem, volt már jobb is tbh.
+
+
+
 /// <summary>
 /// Itt történik a fő vezérlés. Vannak főbb metódusok amelyek az elágazásokat/funkciókat képviselik.
 /// </summary>
@@ -10,7 +17,8 @@ internal class Program
     private static void Main(string[] args)
     {
         Console.CursorVisible = false;
-        DataWarden.Instance().CheckDataFolderExistance();
+        DataWarden.Instance.CheckDataFolderExistance();
+        DataWarden.Instance.LoadAllMonthsFromFile();
         UIManager.Welcome();
         MainMenu();
     }
@@ -46,7 +54,7 @@ internal class Program
             { ConsoleKey.D2,  () => throw new NotImplementedException()},
             { ConsoleKey.D3,  () => throw new NotImplementedException()},
             { ConsoleKey.D4,  () => throw new NotImplementedException()},
-            { ConsoleKey.Escape,  () => Environment.Exit(0) },
+            { ConsoleKey.Escape,  () => Exit()},
         };
         //Bekérés
         while (true)
@@ -59,6 +67,11 @@ internal class Program
                 break;
             }
         }
+    }
+    private static void Exit()
+    {
+        DataWarden.Instance.SaveAllMonths();
+        Environment.Exit(0);
     }
     private static void AddNewMonth()
     {
@@ -85,7 +98,12 @@ internal class Program
                 UIManager.CC(ConsoleColor.Green);
                 UIManager.ClearLine(1);
                 year = Convert.ToUInt16(rawInput);
-                if (year >= 1900) goodInput = true;
+                if (year >= 1900)
+                {
+                    int existingCount = DataWarden.Instance.GetMonthlyLedgers().Count(m => m.GetYear() == year);
+                    if (existingCount < 12) goodInput = true;
+                    else UIManager.PrintError(4, 1);
+                }
                 else UIManager.PrintError(2, 1);
             }
             catch (FormatException) { UIManager.PrintError(1, 1); }
@@ -119,7 +137,9 @@ internal class Program
                     if (Enum.IsDefined(typeof(Months), monthInt))
                     {
                         month = (Months)monthInt;
-                        goodInput = true;
+                        bool alreadyExists = DataWarden.Instance.GetMonthlyLedgers().Any(m => m.GetYear() == year && (int)m.GetMonth() == monthInt);
+                        if (alreadyExists) UIManager.PrintError(5, 1);
+                        else goodInput = true;
                     }
                     else UIManager.PrintError(2, 1);
                 }
@@ -153,25 +173,33 @@ internal class Program
             }
             else if (key == ConsoleKey.N) break;
         }
-        DataWarden.Instance().StoreMonth(monthlyLedger);
+        DataWarden.Instance.StoreMonth(monthlyLedger);
         MainMenu();
     }
+    /// <summary>
+    /// Ennek a repetitív kódjáról nem beszélnék. Nagyon zavar engem is, rettenetesen zavar, de nem tudom hogy lehetne ezt jobban leszűkíteni. 
+    /// És valami cseszett lineáris.
+    /// </summary>
+    /// <param name="month">Melyik hónapba töltünk fel tranzakciót.</param>
+    /// <returns></returns>
     private static bool AddNewTranzaction(MonthlyLedger month)
     {
+        Console.Title = month.GetYear() + " " + month.GetMonth().ToString() + " - Tranzakciók felvétele";
+
         DateTime date = DateTime.MinValue;
-        bool isExpense = true;
+        bool isExpense = true, goodInput = false;
         TransactionCategory category = TransactionCategory.Food;
         int amount = 0;
-        string description = String.Empty;
-
-        bool goodInput = false;
-        string rawInput = "";
+        string description, rawInput = "";
 
         Console.CursorVisible = true;
         UIManager.PrintTip(0, "Dátum formátuma: 1900.01.01 00:00:00\n");
         UIManager.PrintTip(2, "A megszakításhoz nyomja meg az ESC gombot.\n");
         Console.CursorTop = UIManager.consoleCursorRowHelper;
         UIManager.Print("Dátum: ");
+        UIManager.CC(ConsoleColor.Yellow);
+        UIManager.Print(month.GetYear() + "." + month.GetMonth() + ".");
+        UIManager.CC(ConsoleColor.Green);
         int cursorRow = UIManager.GetConsoleCursorPosition()[0];
         int cursorCol = UIManager.GetConsoleCursorPosition()[1];
         do
@@ -186,7 +214,7 @@ internal class Program
                 UIManager.Print(keyInfo.KeyChar.ToString());
                 rawInput = keyInfo.KeyChar + Console.ReadLine();
                 UIManager.CC(ConsoleColor.Green);
-                date = Convert.ToDateTime(rawInput);
+                date = Convert.ToDateTime(month.GetYear() + "." + month.GetMonth() + "." + rawInput);
                 goodInput = true;
                 UIManager.ClearLine(1);
             }
@@ -268,6 +296,7 @@ internal class Program
                 rawInput = Console.ReadLine();
                 UIManager.CC(ConsoleColor.Green);
                 amount = Convert.ToInt32(rawInput);
+                if (amount < 0) throw new ArgumentOutOfRangeException();
                 goodInput = true;
                 UIManager.ClearLine(1);
             }
