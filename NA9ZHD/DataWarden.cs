@@ -34,6 +34,11 @@ public class DataWarden
     /// </summary>
     /// <param name="month">Amit be kell szúrni hónap</param>
     public void StoreMonth(MonthlyLedger month) { months.Add(month); }
+    public void SortMonths()
+    {
+        //LINQ alapú rendezés
+        months = months.OrderBy(month => month.GetYear()).ThenBy(month => month.GetMonth()).ToList();
+    }
     public void LoadAllMonthsFromFile() { FileManager.ReadAllMonthsFromFilesJSON(); }
     public void SaveAllMonths()
     {

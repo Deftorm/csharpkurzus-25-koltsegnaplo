@@ -52,7 +52,20 @@ internal class Program
             { ConsoleKey.D1,  AddNewMonth},
             { ConsoleKey.D2, ListMonths},
             { ConsoleKey.D3,  ListYears},
-            { ConsoleKey.D4,  () => throw new NotImplementedException()},
+            { ConsoleKey.D4,  () =>
+                {
+                    Dictionary<string, string> availableKeys = new Dictionary<string, string>();
+                    availableKeys["ESC"] = "Főmenü";
+                    ConsoleColor[] consoleColors = { ConsoleColor.DarkRed };
+                    Dictionary<ConsoleKey, Action> menuPoints = new Dictionary<ConsoleKey, Action>
+                    {
+                        { ConsoleKey.Escape, () => { return; } }
+                    };
+                    UIManager.PrintAvailableKeys(availableKeys, consoleColors);
+                    GeneralStatistics.ShowGeneralStats();
+                    ConsoleKeyInputHandling(menuPoints);
+                }
+            },
             { ConsoleKey.Escape,  Exit},
         };
         //Bekérés
@@ -177,6 +190,7 @@ internal class Program
             else if (key == ConsoleKey.N) break;
         }
         DataWarden.Instance.StoreMonth(monthlyLedger);
+        DataWarden.Instance.SortMonths();
     }
     /// <summary>
     /// Ennek a repetitív kódjáról nem beszélnék. Nagyon zavar engem is, rettenetesen zavar, de nem tudom hogy lehetne ezt jobban leszűkíteni. 
