@@ -34,6 +34,15 @@ public static class GeneralStatistics
         int totalIncome = transactions.Where(transaction => !transaction.isExpense).Sum(transaction => transaction.amount);
         UIManager.Print($"Összes bevétel:\t\t\t{totalIncome}\n");
     }
+    /// <summary>
+    /// Unit teszthez.
+    /// </summary>
+    /// <param name="transactions">tranzakciók lisátja</param>
+    /// <returns></returns>
+    public static int GetTotalIncome(List<Transaction> transactions)
+    {
+        return transactions.Where(t => !t.isExpense).Sum(t => t.amount);
+    }
 
     private static void TotalExpense()
     {

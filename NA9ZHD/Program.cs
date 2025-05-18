@@ -9,7 +9,6 @@ using NA9ZHD;
 //Ez az egész kód tiszta dissapointment smh.
 
 
-
 /// <summary>
 /// Itt történik a fő vezérlés. Vannak főbb metódusok amelyek az elágazásokat/funkciókat képviselik.
 /// </summary>

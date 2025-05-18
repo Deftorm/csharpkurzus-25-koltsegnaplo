@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NA9ZHD", "NA9ZHD.csproj", "{EAAEEEFB-BDC2-4D1D-BD13-D5EE2D796519}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NA9ZHD", "NA9ZHD.csproj", "{EAAEEEFB-BDC2-4D1D-BD13-D5EE2D796519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NA9ZHD.Tests", "..\NA9ZHD.Tests\NA9ZHD.Tests.csproj", "{1FF3FF01-DCFF-49F5-A319-F7D99F6EBABE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{EAAEEEFB-BDC2-4D1D-BD13-D5EE2D796519}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAAEEEFB-BDC2-4D1D-BD13-D5EE2D796519}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAAEEEFB-BDC2-4D1D-BD13-D5EE2D796519}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FF3FF01-DCFF-49F5-A319-F7D99F6EBABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FF3FF01-DCFF-49F5-A319-F7D99F6EBABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FF3FF01-DCFF-49F5-A319-F7D99F6EBABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FF3FF01-DCFF-49F5-A319-F7D99F6EBABE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
