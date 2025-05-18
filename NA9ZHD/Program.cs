@@ -1,5 +1,4 @@
 ﻿using System;
-
 using NA9ZHD;
 
 
@@ -52,7 +51,7 @@ internal class Program
         {
             { ConsoleKey.D1,  AddNewMonth},
             { ConsoleKey.D2, ListMonths},
-            { ConsoleKey.D3,  () => throw new NotImplementedException()},
+            { ConsoleKey.D3,  ListYears},
             { ConsoleKey.D4,  () => throw new NotImplementedException()},
             { ConsoleKey.Escape,  Exit},
         };
@@ -398,10 +397,78 @@ internal class Program
     }
     private static void ListYears()
     {
+        List<MonthlyLedger> allMonths = DataWarden.Instance.GetMonthlyLedgers();
+        List<ushort> distinctYears = allMonths.Select(m => m.GetYear()).Distinct().OrderBy(y => y).ToList();
 
+        if (distinctYears.Count == 0) return;
+
+        UIManager.PrintTip(0, "Add meg az év sorszámát!\n\n");
+        for (int i = 0; i < distinctYears.Count; i++)
+        {
+            UIManager.CC(ConsoleColor.White);
+            UIManager.Print("[ ");
+            UIManager.CC(ConsoleColor.Cyan);
+            UIManager.Print(i.ToString());
+            UIManager.CC(ConsoleColor.White);
+            UIManager.Print(" ] ");
+            UIManager.CC(ConsoleColor.Green);
+            UIManager.Print(distinctYears[i].ToString() + "\n");
+        }
+        UIManager.Print("\nMegtekintendő év: ");
+        Console.CursorVisible = true;
+        int cursorRow = UIManager.GetConsoleCursorPosition()[0];
+        int cursorCol = UIManager.GetConsoleCursorPosition()[1];
+        bool goodInput = false;
+        uint viewIndex = 0;
+        string rawInput = "";
+        do
+        {
+            Console.SetCursorPosition(cursorCol, cursorRow);
+            UIManager.ClearInputLeftovers(cursorRow, cursorCol, rawInput.Length);
+            try
+            {
+                UIManager.CC(ConsoleColor.Yellow);
+                rawInput = Console.ReadLine();
+                UIManager.CC(ConsoleColor.Green);
+                UIManager.ClearLine(1);
+                viewIndex = Convert.ToUInt32(rawInput);
+                if (viewIndex >= distinctYears.Count) throw new ArgumentOutOfRangeException();
+                goodInput = true;
+            }
+            catch (FormatException) { UIManager.PrintError(1, 1); }
+            catch (ArgumentOutOfRangeException) { UIManager.PrintError(2, 1); }
+            catch (Exception) { UIManager.PrintError(-1, 1); }
+        }
+        while (!goodInput);
+
+        int selectedYear = distinctYears[(int)viewIndex];
+        ViewYear(selectedYear);
     }
-    private void ViewYear()
+    private static void ViewYear(int year)
     {
+        Console.Clear();
+        Console.Title = year + " - Megtekintés";
+        Console.CursorVisible = false;
 
+        Dictionary<string, string> availableKeys = new()
+        {
+            ["ESC"] = "Főmenü"
+        };
+        ConsoleColor[] consoleColors = { ConsoleColor.DarkRed };
+        UIManager.PrintAvailableKeys(availableKeys, consoleColors);
+        Dictionary<ConsoleKey, Action> menuPoints = new()
+        {
+            { ConsoleKey.Escape, MainMenu }
+        };
+
+        // Hozzá tartozó hónapok kigyűjtése
+        var allMonths = DataWarden.Instance.GetMonthlyLedgers();
+        List<MonthlyLedger> yearMonths = allMonths.Where(m => m.GetYear() == year).OrderBy(m => m.GetMonth()).ToList();
+
+        Statistician statistician = new YearStatistician(yearMonths);
+        statistician.ShowData();
+        statistician.ShowProfit();
+        
+        ConsoleKeyInputHandling(menuPoints);
     }
 }

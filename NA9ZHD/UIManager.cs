@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NA9ZHD;
 /// <summary>
@@ -249,7 +245,7 @@ public static class UIManager
         Print(transaction.description + "\n");
         CC(ConsoleColor.Green);
     }
-    public static void PrintMonthProfit(int[] calculations, byte profitDifferenceColorCode)
+    public static void PrintProfit(int[] calculations, byte profitDifferenceColorCode)
     {
         CC(ConsoleColor.Green);
         Print("\nBevétel: ");
@@ -261,7 +257,7 @@ public static class UIManager
         Print($"{calculations[1]}\n");
         CC(ConsoleColor.Green);
         Print("Profit: ");
-        if(profitDifferenceColorCode == 0) CC(ConsoleColor.DarkGreen);
+        if(profitDifferenceColorCode == 0) CC(ConsoleColor.Gray);
         else if(profitDifferenceColorCode == 1) CC(ConsoleColor.Blue);
         else if(profitDifferenceColorCode == 2) CC(ConsoleColor.DarkYellow);
         else if(profitDifferenceColorCode == 3) CC(ConsoleColor.DarkMagenta);

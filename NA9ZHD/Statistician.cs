@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NA9ZHD;
+﻿namespace NA9ZHD;
 /// <summary>
 /// Sztetösztisön
 /// Statisztikus osztály melyben egy hónap, év bevételeit, kiadásait tekinthetjük meg, vagy hasonlíthatjuk össze
@@ -29,37 +22,37 @@ public abstract class Statistician
 }
 internal class MonthStatistician : Statistician
 {
-    MonthlyLedger ledger { get; set; }
+    MonthlyLedger Ledger { get; set; }
     public MonthStatistician(MonthlyLedger ledger)
     {
-        this.ledger = ledger;
+        this.Ledger = ledger;
     }
     public override void ShowData()
     {
         UIManager.Print("\n");
-        foreach (var transaction in ledger.GetTransactions()) UIManager.PrintTransaction(transaction);
+        foreach (var transaction in Ledger.GetTransactions()) UIManager.PrintTransaction(transaction);
     }
     public override int[] CalculateProfit()
     {
-        int kiadasOssz = 0, bevetelOssz = 0;
-        foreach (var transaction in ledger.GetTransactions())
+        int expenses = 0, incomes = 0;
+        foreach (var transaction in Ledger.GetTransactions())
         {
-            if (transaction.isExpense) kiadasOssz += transaction.amount;
-            else bevetelOssz += transaction.amount;
+            if (transaction.isExpense) expenses += transaction.amount;
+            else incomes += transaction.amount;
         }
-        return [bevetelOssz, kiadasOssz, bevetelOssz - kiadasOssz];
+        return [incomes, expenses, incomes - expenses];
     }
     public override void ShowProfit()
     {
         List<MonthlyLedger> allMonths = DataWarden.Instance.GetMonthlyLedgers();
-        int index = allMonths.FindIndex(l => l.GetYear() == ledger.GetYear() && l.GetMonth() == ledger.GetMonth());
+        int index = allMonths.FindIndex(l => l.GetYear() == Ledger.GetYear() && l.GetMonth() == Ledger.GetMonth());
         if (index > 0)
         {
             MonthlyLedger previousLedger = allMonths[index - 1];
             Statistician previousStatistician = new MonthStatistician(previousLedger);
-            UIManager.PrintMonthProfit(CalculateProfit(), ComparePrevious(previousStatistician));
+            UIManager.PrintProfit(CalculateProfit(), ComparePrevious(previousStatistician));
         }
-        else if (index == 0) UIManager.PrintMonthProfit(CalculateProfit(), 0);
+        else if (index == 0) UIManager.PrintProfit(CalculateProfit(), 0);
     }
     protected override byte ComparePrevious(Statistician previousMonth)
     {
@@ -78,25 +71,59 @@ internal class MonthStatistician : Statistician
 }
 internal class YearStatistician : Statistician
 {
+    private readonly List<MonthlyLedger> _months;
+    public YearStatistician(List<MonthlyLedger> ledgers)
+    {
+        _months = ledgers;
+    }
+
     public override void ShowData()
     {
-        throw new NotImplementedException();
+        UIManager.Print("\n");
+        foreach (var ledger in _months)
+        {
+            UIManager.CC(ConsoleColor.White);
+            UIManager.Print($"\nHónap: ");
+            UIManager.CC(ConsoleColor.DarkYellow);
+            UIManager.Print($"{ledger.GetMonth()}\n");
+            UIManager.CC(ConsoleColor.Green);
+            foreach (var transaction in ledger.GetTransactions())
+            {
+                UIManager.PrintTransaction(transaction);
+            }
+        }
     }
     public override int[] CalculateProfit()
     {
-        throw new NotImplementedException();
+        int totalIncome = 0, totalExpense = 0;
+        foreach (var ledger in _months)
+        {
+            foreach (var transaction in ledger.GetTransactions())
+            {
+                if (transaction.isExpense) totalExpense += transaction.amount;
+                else totalIncome += transaction.amount;
+            }
+        }
+        return [totalIncome, totalExpense, totalIncome - totalExpense];
     }
+
     public override void ShowProfit()
     {
-        throw new NotImplementedException();
+        int[] calc = CalculateProfit();
+        UIManager.Print("\n\n");
+        UIManager.CC(ConsoleColor.DarkGray);
+        UIManager.Print("Éves összesítés:\n");
+        UIManager.PrintProfit(calc, 0);
     }
+
     protected override byte ComparePrevious(Statistician previousYear)
     {
-        if (previousYear.GetType() != typeof(YearStatistician)) return 0;
-        return 1;
+        // implementálás másik verzióban
+        return 0;
     }
+
     public override void CompareProfits(Statistician other)
     {
-        throw new NotImplementedException();
+        // implementálás másik verzióban
     }
 }

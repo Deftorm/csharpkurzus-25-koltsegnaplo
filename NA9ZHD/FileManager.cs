@@ -12,7 +12,7 @@ internal class FileManager
         string folderPath = DataWarden.Instance.GetFolderPath();
         string fileName = $"{month.GetYear()}_{month.GetMonth().ToString("D")}.json";
         string fullPath = Path.Combine(folderPath, fileName);
-        var options = new JsonSerializerOptions
+        JsonSerializerOptions options = new JsonSerializerOptions
         {
             WriteIndented = true,
             IncludeFields = true
@@ -26,7 +26,7 @@ internal class FileManager
     }
     public static void ReadAllMonthsFromFilesJSON()
     {
-        var options = new JsonSerializerOptions { IncludeFields = true };
+        JsonSerializerOptions options = new JsonSerializerOptions { IncludeFields = true };
         string[] files = Directory.GetFiles(DataWarden.Instance.GetFolderPath(), "*.json");
         foreach (string file in files)
         {
@@ -40,12 +40,12 @@ internal class FileManager
                 if (!Enum.IsDefined(typeof(Months), monthInt)) continue;
                 Months month = (Months)monthInt;
                 string json = File.ReadAllText(file);
-                var transactions = JsonSerializer.Deserialize<List<Transaction>>(json, options);
+                List<Transaction>? transactions = JsonSerializer.Deserialize<List<Transaction>>(json, options);
                 if (transactions == null) continue;
                 MonthlyLedger ledger = new MonthlyLedger(year, month, transactions);
                 DataWarden.Instance.StoreMonth(ledger);
             }
-            catch (Exception) { continue; }
+            catch (Exception) { UIManager.PrintError(0, 1); continue; }
         }
     }
 
